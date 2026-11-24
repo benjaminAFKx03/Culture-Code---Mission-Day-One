@@ -1108,7 +1108,7 @@ body.mode-3d .toasts{left:50%;right:auto;transform:translateX(-50%);width:min(44
   /* Texts for version 0.5 (characters, CEO joker, sound) */
   var STR_EXT2 = {
     en: {
-      startEyebrow: 'Intercultural escape game · 3D · Version 2.4',
+      startEyebrow: 'Intercultural escape game · 3D · Version 2.5',
       quick1t: 'Your own team', quick1: 'Create your character and walk through the HORIZON building with the arrow keys. A goal at the top and a green path always show the way.',
       quick2t: 'Collect points', quick2: 'Solved tasks, time left and the quiz bring points. Mistakes cost time, and the CEO joker costs 30 seconds, in the last task one minute. When the 15 minutes are over, the game is over.',
       quick4t: 'Check or call your joker', quick4: 'The green CHECK button tests your answers. The yellow JOKER button calls the joker of the room: Jakub, Thilo, Mika or, in the Field Notes, CEO Benjamin. In the Boardroom the clock stops, and pause stops it any time.',
@@ -2591,7 +2591,7 @@ body.mode-3d .toasts{left:50%;right:auto;transform:translateX(-50%);width:min(44
       if (!tgt) { var cand = DATA.r1s2.notes.filter(function (n) { return s2.hints.indexOf(n.id) < 0 && s2.assign[n.id] !== n.answer; })[0] || DATA.r1s2.notes.filter(function (n) { return s2.hints.indexOf(n.id) < 0; })[0]; tgt = cand ? cand.id : null; }
       s2.okN = s2.okN || [];
       var tn = DATA.r1s2.notes.filter(function (n) { return s2.okN.indexOf(n.id) < 0 && s2.assign[n.id] !== n.answer; })[0] || DATA.r1s2.notes.filter(function (n) { return s2.okN.indexOf(n.id) < 0; })[0];
-      if (!tn) { toast(t('toastNoJoker')); return; }
+      if (!tn) { state.lastJoker = key; addPenalty('joker'); state.timer.elapsed += 30000; addEvent('joker', PTS.joker, key); toast('Everyone is already placed correctly. CEO Benjamin charges you anyway. −1:00', 'gold'); return; }
       Object.keys(s2.assign).forEach(function (k) { if (s2.assign[k] === tn.answer) delete s2.assign[k]; });
       s2.assign[tn.id] = tn.answer; s2.okN.push(tn.id); if (s2.hints.indexOf(tn.id) < 0) s2.hints.push(tn.id); s2.sel = null; s2.msg = null;
       state.lastJoker = key; addPenalty('joker'); state.timer.elapsed += 30000; addEvent('joker', PTS.joker, key);
@@ -5379,7 +5379,7 @@ body.mode-3d .toasts{left:50%;right:auto;transform:translateX(-50%);width:min(44
         else if (st === 'r1s2') {
           state.r1s2.sel = null; var ob = (state.r1s2.okN || []).slice(); useJoker('r1s2'); var nk = (state.r1s2.okN || []).filter(function (x) { return ob.indexOf(x) < 0; })[0];
           var who = nk ? Object.keys(NOTE_P).filter(function (pid) { return NOTE_P[pid][0] === nk; })[0] : null, nd = nk ? DATA.r1s2.notes.filter(function (n) { return n.id === nk; })[0] : null;
-          d.reply = nk ? 'Fine. ' + (who && NPC[who] ? NPC[who].name : 'One person') + ' now has the right concept, ' + c.r1s2.cards[nd.answer].name + '. That cost you a full minute.' : TK('ceoDone');
+          d.reply = nk ? 'Fine. ' + (who && NPC[who] ? NPC[who].name : 'One person') + ' now has the right concept, ' + c.r1s2.cards[nd.answer].name + '. That cost you a full minute.' : 'Everyone is already placed correctly. But you called me anyway, and time is money. That cost you a full minute.';
         } else if (st === 'r2s1') {
           var pb = state.r2s1.locked.slice(); useJoker('r2s1'); var np = state.r2s1.locked.filter(function (x) { return pb.indexOf(x) < 0; })[0];
           d.reply = np ? TK('ceoR2s1', { name: c.r2s1.people[np].name }) : TK('ceoDone');
